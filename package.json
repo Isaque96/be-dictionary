@@ -1,0 +1,35 @@
+{
+  "name": "be-dictionary",
+  "version": "1.0.0",
+  "description": "My coodesh test for Node.js",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon ./src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Isaque96/be-dictionary.git"
+  },
+  "keywords": [
+    "coodesh",
+    "test",
+    "nodejs",
+    "javascript"
+  ],
+  "author": "Isaque <isaque_schuwarte@hotmail.com> (https://isaque.schuwarte.com.br/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Isaque96/be-dictionary/issues"
+  },
+  "homepage": "https://github.com/Isaque96/be-dictionary#readme",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mysql2": "^3.10.0",
+    "sequelize": "^6.37.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.2"
+  }
+}

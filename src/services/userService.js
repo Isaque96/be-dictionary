@@ -1,4 +1,4 @@
-const User = require("../models/user");
+const User = require("../models/User");
 const LoginMessage = require("../utils/loginMessage");
 const HashService = require("./hashService");
 const TokenService = require("./tokenService");

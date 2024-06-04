@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon ./src/index.js",
+    "sync": "node ./src/db/sync.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,10 +25,15 @@
   },
   "homepage": "https://github.com/Isaque96/be-dictionary#readme",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.10.0",
-    "sequelize": "^6.37.3"
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "sequelize": "^6.37.3",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.2"

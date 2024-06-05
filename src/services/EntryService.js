@@ -5,7 +5,7 @@ const Language = require("../models/Language");
 const PaginatedResponse = require("../utils/PaginatedResponse");
 
 module.exports = class EntryService {
-  static async getWord(userId, languageId, word) {
+  static async getWord(userId, languageId, wordToFind) {
     const word = await Word.findOne({
       raw: true,
       where: {
@@ -13,7 +13,7 @@ module.exports = class EntryService {
           { languageId: languageId },
           Sequelize.where(
             Sequelize.fn("LOWER", Sequelize.col("word")),
-            Sequelize.fn("LOWER", word)
+            Sequelize.fn("LOWER", wordToFind)
           )
         ]
       }

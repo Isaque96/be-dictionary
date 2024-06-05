@@ -11,6 +11,7 @@ const passportConfig = require("./config/passport");
 const homeRoutes = require("./routes/homeRoutes");
 const authRoutes = require("./routes/authRoutes");
 const entryRoutes = require("./routes/entryRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(passportConfig.initialize());
 app.use("", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/entries", entryRoutes);
+app.use("/user", userRoutes);
 
 const port = parseInt(process.env.PORT ?? "3000");
 dbConn

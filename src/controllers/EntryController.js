@@ -11,20 +11,20 @@ module.exports = class EntryController {
     const language = req.params.language;
     const cursor = req.query.cursor;
     const search = req.query.search;
-    const limit = req.query.limit;
+    const limit = req.query.limit ? parseInt(req.query.limit) : null;
 
     const langFromDb = await EntryService.verifyLanguage(language);
 
     if (!langFromDb) {
-      res.status(400).json(new Message(`Language not found(${language})`));
-      return;
+      return res
+        .status(400)
+        .json(new Message(`Language not found(${language})`));
     }
 
     if (!search) {
-      res
+      return res
         .status(400)
         .json(new Message("Porfavor informe algum parametro de busca(search)"));
-      return;
     }
 
     const paginatedResponse = await EntryService.getWordsPaginated(
@@ -35,5 +35,23 @@ module.exports = class EntryController {
     );
 
     res.status(200).json(paginatedResponse);
+  }
+
+  static async getWord(req, res) {
+    const { language, word } = req.params;
+    const userId = req.user.id;
+
+    const dbLanguage = await EntryService.verifyLanguage(language);
+    if (!language)
+      return res
+        .status(404)
+        .json(new Message(`Language not found(${language})`));
+
+    const dbWord = await EntryService.getWord(userId, dbLanguage.id, word);
+
+    if (!language)
+      return res.status(404).json(new Message(`Word not founded(${word}})`));
+
+    res.status(200).json(dbWord);
   }
 };

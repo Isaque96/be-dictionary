@@ -1,4 +1,4 @@
-const Message = require("../utils/responseMessage");
+const Message = require("../utils/Message");
 
 module.exports = class HomeController {
   /**

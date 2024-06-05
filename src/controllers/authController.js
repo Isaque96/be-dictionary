@@ -1,4 +1,4 @@
-const Message = require("../utils/responseMessage");
+const Message = require("../utils/Message");
 const UserService = require("../services/userService");
 
 module.exports = class AuthController {
@@ -10,10 +10,9 @@ module.exports = class AuthController {
    */
   static async signin(req, res) {
     if (!req.body.email || !req.body.password) {
-      res
+      return res
         .status(400)
         .json(new Message("Both email and password are required fields!"));
-      return;
     }
 
     const login = await UserService.authorizeUser(
@@ -22,8 +21,7 @@ module.exports = class AuthController {
     );
 
     if (login == null) {
-      res.status(400).json(new Message("Invalid email or password!"));
-      return;
+      return res.status(400).json(new Message("Invalid email or password!"));
     }
 
     res.status(200).json(login);
@@ -37,10 +35,9 @@ module.exports = class AuthController {
     };
 
     if (!user.name || !user.email || !user.password) {
-      res
+      return res
         .status(400)
         .json(new Message("Email, password and name are required fields!"));
-      return;
     }
 
     const registeredUser = await UserService.createUser(user);

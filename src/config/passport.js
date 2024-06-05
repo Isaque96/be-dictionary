@@ -1,6 +1,5 @@
 const passport = require("passport");
 const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
-const Message = require("../utils/responseMessage");
 
 /**
  * @type {import("passport-jwt").StrategyOptionsWithoutRequest}
@@ -14,14 +13,15 @@ const opts = {
 passport.use(
   new JwtStrategy(opts, function (jwtPayload, done) {
     try {
-      const user = { id: jwtPayload.id, email: jwtPayload.email };
+      const user = { id: jwtPayload?.id, email: jwtPayload?.email };
 
-      if (!user.id || !user.name)
-        return done(null, false, new Message("Missing information!"));
+      if (!user.id || !user.email) {
+        return done(null, false, "Unauthorized user!");
+      }
 
-      return done(null, user, new Message("Authorized user!"));
+      return done(null, user, "Authorized user!");
     } catch (error) {
-      return done(error, false, new Message("Unexpected error!"));
+      return done(error, false, "Unexpected error!");
     }
   })
 );

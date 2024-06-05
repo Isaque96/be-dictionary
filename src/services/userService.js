@@ -46,4 +46,12 @@ module.exports = class UserService {
       TokenService.generateToken(userFromDb)
     );
   }
+
+  static async getUserById(userId) {
+    return await User.findOne({
+      attributes: { exclude: ["password"] },
+      raw: true,
+      where: { id: userId }
+    });
+  }
 };

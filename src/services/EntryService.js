@@ -9,6 +9,7 @@ module.exports = class EntryService {
     if (!language) return null;
 
     const dbLangEntity = await Language.findOne({
+      raw: true,
       where: Sequelize.where(
         Sequelize.fn("LOWER", Sequelize.col("code")),
         Sequelize.fn("LOWER", language)

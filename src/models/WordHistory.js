@@ -31,8 +31,7 @@ const WordHistory = sequelize.define(
   {
     tableName: "words_history",
     timestamps: true,
-    updatedAt: false,
-    indexes: [{ unique: true, fields: ["userId", "wordId"] }]
+    updatedAt: false
   }
 );
 

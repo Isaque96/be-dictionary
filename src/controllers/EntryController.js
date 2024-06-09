@@ -54,4 +54,26 @@ module.exports = class EntryController {
 
     res.status(200).json(dbWord);
   }
+
+  static async saveFavorite(req, res) {
+    const { language, word } = req.params;
+    const userId = req.user.id;
+
+    const dbLanguage = await EntryService.verifyLanguage(language);
+    if (!language)
+      return res
+        .status(404)
+        .json(new Message(`Language not found(${language})`));
+  }
+
+  static async removeFavorite(req, res) {
+    const { language, word } = req.params;
+    const userId = req.user.id;
+
+    const dbLanguage = await EntryService.verifyLanguage(language);
+    if (!language)
+      return res
+        .status(404)
+        .json(new Message(`Language not found(${language})`));
+  }
 };

@@ -19,9 +19,7 @@ module.exports = class EntryService {
       }
     });
 
-    if (word) {
-      await WordHistory.create({ userId, wordId: word.id });
-    }
+    if (word) await WordHistory.create({ userId, wordId: word.id });
 
     return word;
   }
@@ -45,9 +43,10 @@ module.exports = class EntryService {
       where: {
         userId: userId
       },
-      includes: [
+      include: [
         {
           model: Word,
+          required: true,
           attributes: ["word"]
         }
       ],
@@ -55,10 +54,15 @@ module.exports = class EntryService {
       limit: limit
     };
 
+    const historyMap = (history) => {
+      return history;
+    };
+
     const result = await this.#getPaginatedResults(
       WordHistory,
       options,
       cursor,
+      historyMap,
       limit
     );
 
@@ -77,7 +81,11 @@ module.exports = class EntryService {
       limit: limit
     };
 
-    return this.#getPaginatedResults(Word, options, cursor, limit);
+    const wordMap = (word) => {
+      return word.word;
+    };
+
+    return this.#getPaginatedResults(Word, options, cursor, wordMap, limit);
   }
 
   /**
@@ -85,10 +93,17 @@ module.exports = class EntryService {
    * @param {import("sequelize").ModelCtor<Model<any,any>>} model
    * @param {import("sequelize").FindOptions<Model<any,any>>} options
    * @param {string} cursor
+   * @param {function(any):any} mapResponse
    * @param {number} limit
    * @returns {Promise<PaginatedResponse>}
    */
-  static async #getPaginatedResults(model, options, cursor, limit = 10) {
+  static async #getPaginatedResults(
+    model,
+    options,
+    cursor,
+    mapResponse = null,
+    limit = 10
+  ) {
     let previousId = 0;
 
     const totalDocs = await model.count(options);
@@ -126,8 +141,11 @@ module.exports = class EntryService {
     const hasNext = results.length === limit;
     const hasPrev = previousCursor !== null;
 
+    let mappedValues = results.map((r) => r.dataValues);
+    if (mapResponse) mappedValues = mappedValues.map(mapResponse);
+
     return new PaginatedResponse(
-      results.map((r) => r.dataValues),
+      mappedValues,
       totalDocs,
       previousCursor,
       nextCursor,

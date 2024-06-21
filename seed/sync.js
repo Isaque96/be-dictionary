@@ -1,20 +1,11 @@
 require("dotenv").config({ path: ".env.local" });
+const syncModels = require("../src/config/db/syncModels");
+
 const cheerio = require("cheerio");
 const { Sequelize } = require("sequelize");
 
-const User = require("../models/User");
-const Language = require("../models/Language");
-const Word = require("../models/Word");
-const WordHistory = require("../models/WordHistory");
-const FavoriteWords = require("../models/FavoriteWords");
-
-async function syncModels() {
-  await User.sync();
-  await Language.sync();
-  await Word.sync();
-  await WordHistory.sync();
-  await FavoriteWords.sync();
-}
+const Language = require("../src/models/Language");
+const Word = require("../src/models/Word");
 
 function parseHtmlLanguage(html) {
   const selector = cheerio.load(html);

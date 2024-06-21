@@ -1,4 +1,4 @@
-const conn = require("../db/conn");
+const conn = require("../config/db/conn");
 const { DataTypes } = require("sequelize");
 const Language = require("./Language");
 
@@ -30,7 +30,5 @@ const Word = conn.define(
     indexes: [{ unique: true, fields: ["word", "languageId"] }]
   }
 );
-
-Word.belongsTo(Language, { foreignKey: "languageId" });
 
 module.exports = Word;

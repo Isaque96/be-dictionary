@@ -1,4 +1,4 @@
-const sequelize = require("../db/conn");
+const sequelize = require("../config/db/conn");
 const { DataTypes } = require("sequelize");
 const User = require("./User");
 const Word = require("./Word");
@@ -34,8 +34,5 @@ const WordHistory = sequelize.define(
     updatedAt: false
   }
 );
-
-User.belongsToMany(Word, { through: WordHistory, foreignKey: "userId" });
-Word.belongsToMany(User, { through: WordHistory, foreignKey: "wordId" });
 
 module.exports = WordHistory;

@@ -1,9 +1,9 @@
-const sequelize = require("../db/conn");
+const sequelize = require("../config/db/conn");
 const { DataTypes } = require("sequelize");
 const User = require("./User");
 const Word = require("./Word");
 
-const FavoriteWord = sequelize.define(
+const FavoriteWords = sequelize.define(
   "FavoriteWord",
   {
     id: {
@@ -36,7 +36,4 @@ const FavoriteWord = sequelize.define(
   }
 );
 
-User.belongsToMany(Word, { through: FavoriteWord, foreignKey: "userId" });
-Word.belongsToMany(User, { through: FavoriteWord, foreignKey: "wordId" });
-
-module.exports = FavoriteWord;
+module.exports = FavoriteWords;

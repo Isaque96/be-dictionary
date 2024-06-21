@@ -1,5 +1,5 @@
 const Message = require("../utils/Message");
-const UserService = require("../services/userService");
+const UserService = require("../services/UserService");
 
 module.exports = class AuthController {
   /**

@@ -1,4 +1,4 @@
-const sequelize = require("../db/conn");
+const sequelize = require("../config/db/conn");
 const { DataTypes } = require("sequelize");
 
 const Language = sequelize.define(

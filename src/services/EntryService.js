@@ -105,7 +105,6 @@ module.exports = class EntryService {
     limit = 10
   ) {
     let previousId = 0;
-
     const totalDocs = await model.count(options);
 
     if (cursor) {
@@ -113,22 +112,43 @@ module.exports = class EntryService {
         Buffer.from(cursor, "base64").toString("utf-8")
       ).id;
 
-      options.where.id = {
-        [Op.gt]: previousId
+      options.where = {
+        ...options.where,
+        id: {
+          [Op.gt]: previousId
+        }
       };
     }
 
-    const results = await model.findAll(options);
+    options.limit = limit;
+    options.order = [["id", "ASC"]]; // Ordenando por ID em ordem ascendente
 
+    const results = await model.findAll(options);
     const nextId = results.length ? results[results.length - 1].id : null;
 
-    const previousCursor = previousId
-      ? Buffer.from(
+    // Calculando o cursor anterior
+    let previousCursor = null;
+    if (cursor) {
+      const previousResults = await model.findAll({
+        ...options,
+        where: {
+          ...options.where,
+          id: {
+            [Op.lt]: previousId
+          }
+        },
+        limit: limit,
+        order: [["id", "DESC"]]
+      });
+
+      if (previousResults.length) {
+        previousCursor = Buffer.from(
           JSON.stringify({
-            id: await this.#getPreviousId(model, previousId, options)
+            id: previousResults[previousResults.length - 1].id
           })
-        ).toString("base64")
-      : null;
+        ).toString("base64");
+      }
+    }
 
     const nextCursor = nextId
       ? Buffer.from(

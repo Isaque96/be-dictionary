@@ -60,7 +60,7 @@ module.exports = class EntryController {
     const userId = req.user.id;
 
     const dbLanguage = await EntryService.verifyLanguage(language);
-    if (!language)
+    if (!dbLanguage)
       return res
         .status(404)
         .json(new Message(`Language not found(${language})`));

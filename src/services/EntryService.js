@@ -1,4 +1,5 @@
 const { Op, Sequelize } = require("sequelize");
+const FavoriteWord = require("../models/FavoriteWords");
 const WordHistory = require("../models/WordHistory");
 const Word = require("../models/Word");
 const Language = require("../models/Language");
@@ -121,12 +122,11 @@ module.exports = class EntryService {
     }
 
     options.limit = limit;
-    options.order = [["id", "ASC"]]; // Ordenando por ID em ordem ascendente
+    options.order = [["id", "ASC"]];
 
     const results = await model.findAll(options);
     const nextId = results.length ? results[results.length - 1].id : null;
 
-    // Calculando o cursor anterior
     let previousCursor = null;
     if (cursor) {
       const previousResults = await model.findAll({
@@ -174,25 +174,9 @@ module.exports = class EntryService {
     );
   }
 
-  /**
-   * Retrieve the previous id for backward cursor
-   * @param {import("sequelize").ModelCtor<Model<any,any>>} model
-   * @param {number} previousId
-   * @param {import("sequelize").FindOptions<Model<any,any>>} options
-   * @returns {Promise<number>}
-   */
-  static async #getPreviousId(model, previousId, options) {
-    options.where.id = { [Op.lt]: previousId };
-    let backwardQueryOptions = {
-      attributes: ["id"],
-      where: options.where,
-      order: [["id", "ASC"]],
-      limit: options.limit + 1,
-      raw: true
-    };
+  static async favoriteWord(userId, languageId, word) {
+    const wordId = await Word.findOne({ where: {} });
 
-    const ids = await model.findAll(backwardQueryOptions);
-
-    return ids.length === backwardQueryOptions.limit ? ids[0].id : 0;
+    FavoriteWord.create();
   }
 };

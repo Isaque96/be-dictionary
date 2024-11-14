@@ -16,7 +16,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 153624
       MYSQL_DATABASE: be_dictionary
-      MYSQL_USER: root
       MYSQL_PASSWORD: 153624
     ports:
       - "3306:3306"

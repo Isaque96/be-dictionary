@@ -9,9 +9,7 @@ module.exports = class EntryController {
    */
   static async paginatedWords(req, res) {
     const language = req.params.language;
-    const cursor = req.query.cursor;
-    const search = req.query.search;
-    const limit = req.query.limit ? parseInt(req.query.limit) : null;
+    const { cursor, search, limit } = req.query;
 
     const langFromDb = await EntryService.verifyLanguage(language);
 
@@ -31,7 +29,7 @@ module.exports = class EntryController {
       langFromDb.id,
       search,
       cursor,
-      limit
+      limit ? parseInt(limit) : null
     );
 
     res.status(200).json(paginatedResponse);

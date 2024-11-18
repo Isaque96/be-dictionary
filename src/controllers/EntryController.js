@@ -1,4 +1,5 @@
 const EntryService = require("../services/EntryService");
+const FavoriteService = require("../services/FavoriteService");
 const Message = require("../utils/Message");
 
 module.exports = class EntryController {
@@ -62,6 +63,11 @@ module.exports = class EntryController {
       return res
         .status(404)
         .json(new Message(`Language not found(${language})`));
+
+    const dbWord = await EntryService.getWord(userId, dbLanguage.id, word);
+    const favorited = await FavoriteService.favorite(userId, dbWord.id);
+
+    res.status(200).json(favorited);
   }
 
   static async removeFavorite(req, res) {
@@ -73,5 +79,15 @@ module.exports = class EntryController {
       return res
         .status(404)
         .json(new Message(`Language not found(${language})`));
+
+    const dbWord = await EntryService.getWord(userId, dbLanguage.id, word);
+    const isDeleted = await FavoriteService.unfavorite(userId, dbWord.id);
+
+    if (isDeleted)
+      res
+        .status(200)
+        .json(new Message(`Favorite word(${word}) successfully removed!`));
+    else
+      res.status(409).json(new Message(`Unable to remove your favorite word!`));
   }
 };

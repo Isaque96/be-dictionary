@@ -1,11 +1,10 @@
 const { Op, Sequelize } = require("sequelize");
-const FavoriteWord = require("../models/FavoriteWords");
 const WordHistory = require("../models/WordHistory");
 const Word = require("../models/Word");
 const Language = require("../models/Language");
-const PaginatedResponse = require("../utils/PaginatedResponse");
+const BaseService = require("./BaseService");
 
-module.exports = class EntryService {
+module.exports = class EntryService extends BaseService {
   static async getWord(userId, languageId, wordToFind) {
     const word = await Word.findOne({
       raw: true,
@@ -59,7 +58,7 @@ module.exports = class EntryService {
       return history;
     };
 
-    const result = await this.#getPaginatedResults(
+    const result = await this._getPaginatedResultsProxy(
       WordHistory,
       options,
       cursor,
@@ -86,97 +85,12 @@ module.exports = class EntryService {
       return word.word;
     };
 
-    return this.#getPaginatedResults(Word, options, cursor, wordMap, limit);
-  }
-
-  /**
-   * Retrieve paginated model by cursor
-   * @param {import("sequelize").ModelCtor<Model<any,any>>} model
-   * @param {import("sequelize").FindOptions<Model<any,any>>} options
-   * @param {string} cursor
-   * @param {function(any):any} mapResponse
-   * @param {number} limit
-   * @returns {Promise<PaginatedResponse>}
-   */
-  static async #getPaginatedResults(
-    model,
-    options,
-    cursor,
-    mapResponse = null,
-    limit = 10
-  ) {
-    let previousId = 0;
-    const totalDocs = await model.count(options);
-
-    if (cursor) {
-      previousId = JSON.parse(
-        Buffer.from(cursor, "base64").toString("utf-8")
-      ).id;
-
-      options.where = {
-        ...options.where,
-        id: {
-          [Op.gt]: previousId
-        }
-      };
-    }
-
-    options.limit = limit;
-    options.order = [["id", "ASC"]];
-
-    const results = await model.findAll(options);
-    const nextId = results.length ? results[results.length - 1].id : null;
-
-    let previousCursor = null;
-    if (cursor) {
-      const previousResults = await model.findAll({
-        ...options,
-        where: {
-          ...options.where,
-          id: {
-            [Op.lt]: previousId
-          }
-        },
-        limit: limit,
-        order: [["id", "DESC"]]
-      });
-
-      if (previousResults.length) {
-        previousCursor = Buffer.from(
-          JSON.stringify({
-            id: previousResults[previousResults.length - 1].id
-          })
-        ).toString("base64");
-      }
-    }
-
-    const nextCursor = nextId
-      ? Buffer.from(
-          JSON.stringify({
-            id: nextId
-          })
-        ).toString("base64")
-      : null;
-
-    const hasNext = results.length === limit;
-    const hasPrev = previousCursor !== null;
-
-    let mappedValues = results.map((r) => r.dataValues);
-    if (mapResponse) mappedValues = mappedValues.map(mapResponse);
-
-    return new PaginatedResponse(
-      mappedValues,
-      totalDocs,
-      previousCursor,
-      nextCursor,
-      hasNext,
-      hasPrev
+    return this._getPaginatedResultsProxy(
+      Word,
+      options,
+      cursor,
+      wordMap,
+      limit
     );
-  }
-
-  static async favoriteWord(userId, languageId, word) {
-    const wordId = await Word.findOne({ where: {} });
-
-    FavoriteWord.create();
   }
 };

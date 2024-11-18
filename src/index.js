@@ -1,6 +1,8 @@
 // for local environment
 require("dotenv").config({ path: ".env.local" });
 
+// redis client
+
 // db connection and for table right association
 const syncModels = require("./config/db/syncModels");
 
@@ -9,6 +11,8 @@ const express = require("express");
 // middlewares
 const errorHandler = require("./middlewares/errorMiddleware");
 const exceptionHandler = require("./middlewares/exceptionMiddleware");
+const responseTimeMiddleware = require("./middlewares/responseTimeMiddleware");
+const cacheMiddleware = require("./middlewares/cacheMiddleware");
 
 // auth config
 const passportConfig = require("./config/passport");
@@ -22,8 +26,10 @@ const userRoutes = require("./routes/userRoutes");
 const app = express();
 
 app.use(express.json());
+app.use(responseTimeMiddleware);
 app.use(errorHandler);
 app.use(exceptionHandler);
+app.use(cacheMiddleware);
 app.use(passportConfig.initialize());
 
 app.use("", homeRoutes);
@@ -33,7 +39,11 @@ app.use("/user", userRoutes);
 
 const port = parseInt(process.env.PORT ?? "3000");
 syncModels()
-  .then(() =>
-    app.listen(port, () => console.log(`Server running on port ${port}`))
-  )
-  .catch((err) => console.error("db error", err));
+  .then(async () => {
+    await require("./config/redisClient").connect();
+    app.listen(port, () => console.log(`Server running on port ${port}`));
+  })
+  .catch(async (err) => {
+    await require("./config/redisClient").disconnect();
+    console.error("db error", err);
+  });

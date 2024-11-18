@@ -8,15 +8,27 @@ services:
       - "6379:6379"
     volumes:
       - ./redis_data:/data
-    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    command:
+      [
+        "redis-server",
+        "--requirepass",
+        "${REDIS_PASSWORD}",
+        "--databases",
+        "16",
+        "--save",
+        "60",
+        "1",
+        "--loglevel",
+        "warning"
+      ]
 
   mysql:
     image: mysql:latest
     container_name: mysql_container
     environment:
-      MYSQL_ROOT_PASSWORD: 153624
-      MYSQL_DATABASE: be_dictionary
-      MYSQL_PASSWORD: 153624
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_DATABASE: "${DB_DATABASE}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
     ports:
       - "3306:3306"
     volumes:

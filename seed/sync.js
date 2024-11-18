@@ -10,7 +10,7 @@ const Word = require("../src/models/Word");
 function parseHtmlLanguage(html) {
   const selector = cheerio.load(html);
 
-  let languages = [];
+  const languages = [];
   selector("body>table>tbody>tr").each((i, row) => {
     if (i === 0) return;
 

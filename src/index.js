@@ -6,6 +6,9 @@ require("dotenv").config({ path: ".env.local" });
 // db connection and for table right association
 const syncModels = require("./config/db/syncModels");
 
+// redis client for open connection
+const redisClient = require("./config/redisClient");
+
 const express = require("express");
 
 // middlewares
@@ -40,10 +43,11 @@ app.use("/user", userRoutes);
 const port = parseInt(process.env.PORT ?? "3000");
 syncModels()
   .then(async () => {
-    await require("./config/redisClient").connect();
+    await redisClient.connect();
     app.listen(port, () => console.log(`Server running on port ${port}`));
   })
   .catch(async (err) => {
-    await require("./config/redisClient").disconnect();
     console.error("db error", err);
   });
+
+await redisClient.disconnect();

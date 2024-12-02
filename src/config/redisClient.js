@@ -21,7 +21,6 @@ client.on("connect", () => {
 
 client.on("error", async (err) => {
   console.error("Redis error", err);
-  await client.discard();
 });
 
 module.exports = client;
